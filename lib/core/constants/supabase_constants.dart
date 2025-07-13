@@ -1,0 +1,4 @@
+// lib/core/constants/supabase_constants.dart
+
+const String supabaseUrl = 'https://ueklevzpkudeqdmwqssg.supabase.co';
+const String supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVla2xldnpwa3VkZXFkbXdxc3NnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0Mjg2NzEsImV4cCI6MjA2ODAwNDY3MX0.IBmdUMeaeS6ajBq0zPsNX4axpj0PgwwhNMGe5rjSe84';
