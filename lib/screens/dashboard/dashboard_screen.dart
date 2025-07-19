@@ -233,7 +233,7 @@ class _DashboardScreenState extends State<DashboardScreen>
         items: [
           _buildNavItem(0, 'assets/icons/home-simple.svg', 'Home'),
           _buildNavItem(1, 'assets/icons/submit-document.svg', 'Submissions'),
-          _buildNavItem(2, 'assets/icons/notifications.svg', 'Notifications'),
+          _buildNavItem(2, 'assets/icons/app-notification.svg', 'Notifications'),
           _buildNavItem(3, 'assets/icons/user.svg', 'Profile'),
         ],
         initialActiveIndex: _selectedIndex,

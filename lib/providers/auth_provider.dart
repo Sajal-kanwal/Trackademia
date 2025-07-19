@@ -1,6 +1,9 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notesheet_tracker/services/auth_service.dart';
+import 'package:notesheet_tracker/providers/notesheet_provider.dart';
+import 'package:notesheet_tracker/providers/notification_provider.dart';
+import 'package:notesheet_tracker/providers/profile_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 // Provider for the AuthService instance
@@ -16,13 +19,14 @@ final authStateChangesProvider = StreamProvider<AuthState>((ref) {
 // StateNotifierProvider to handle authentication actions like login, logout, etc.
 // The boolean state represents the loading status (true if an action is in progress).
 final authNotifierProvider = StateNotifierProvider<AuthNotifier, bool>((ref) {
-  return AuthNotifier(ref.read(authServiceProvider));
+  return AuthNotifier(ref.read(authServiceProvider), ref);
 });
 
 class AuthNotifier extends StateNotifier<bool> {
   final AuthService _authService;
+  final Ref _ref;
 
-  AuthNotifier(this._authService) : super(false);
+  AuthNotifier(this._authService, this._ref) : super(false);
 
   // Sign up a new user
   Future<void> signUp({
@@ -62,6 +66,10 @@ class AuthNotifier extends StateNotifier<bool> {
     state = true;
     try {
       await _authService.signOut();
+      _ref.invalidate(userProfileProvider); // Invalidate userProfileProvider on sign out
+      _ref.invalidate(notesheetsProvider);
+      _ref.invalidate(notesheetCountsProvider);
+      _ref.invalidate(notificationsProvider);
     } finally {
       state = false;
     }
