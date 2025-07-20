@@ -4,14 +4,14 @@ import 'package:notesheet_tracker/services/auth_service.dart';
 import 'package:notesheet_tracker/providers/notesheet_provider.dart';
 import 'package:notesheet_tracker/providers/notification_provider.dart';
 import 'package:notesheet_tracker/providers/profile_provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 // Provider for the AuthService instance
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
 
 // StreamProvider to listen to authentication state changes
 // This will let the app know when a user logs in or out in real-time.
-final authStateChangesProvider = StreamProvider<AuthState>((ref) {
+final authStateChangesProvider = StreamProvider<sb.AuthState>((ref) {
   final authService = ref.watch(authServiceProvider);
   return authService.authStateChanges;
 });
@@ -34,6 +34,7 @@ class AuthNotifier extends StateNotifier<bool> {
     required String password,
     required String fullName,
     required String studentId,
+    required String role,
   }) async {
     state = true; // Set loading state
     try {
@@ -42,6 +43,7 @@ class AuthNotifier extends StateNotifier<bool> {
         password: password,
         fullName: fullName,
         studentId: studentId,
+        role: role,
       );
     } finally {
       state = false; // Reset loading state
@@ -70,6 +72,7 @@ class AuthNotifier extends StateNotifier<bool> {
       _ref.invalidate(notesheetsProvider);
       _ref.invalidate(notesheetCountsProvider);
       _ref.invalidate(notificationsProvider);
+      _ref.invalidate(userRoleProvider);
     } finally {
       state = false;
     }
@@ -84,4 +87,14 @@ class AuthNotifier extends StateNotifier<bool> {
       state = false;
     }
   }
+
+  // Get user role
+  Future<String?> getUserRole() async {
+    return await _authService.getUserRole();
+  }
 }
+
+final userRoleProvider = FutureProvider<String?>((ref) async {
+  final authService = ref.watch(authServiceProvider);
+  return authService.getUserRole();
+});

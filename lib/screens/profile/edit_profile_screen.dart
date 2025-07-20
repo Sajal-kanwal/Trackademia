@@ -3,14 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notesheet_tracker/models/user_model.dart';
 import 'package:notesheet_tracker/providers/profile_provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notesheet_tracker/widgets/common/loading_indicator.dart';
+import 'package:notesheet_tracker/widgets/common/error_message.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
-  final UserProfile userProfile;
+  final User userProfile;
 
   const EditProfileScreen({super.key, required this.userProfile});
 
   @override
-  _EditProfileScreenState createState() => _EditProfileScreenState();
+  ConsumerState<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
@@ -53,8 +55,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         Navigator.pop(context); // Go back to profile screen
       } catch (e) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update profile: ${e.toString()}')),
+        showDialog(
+          context: context,
+          builder: (context) => ErrorMessage(message: 'Failed to update profile: ${e.toString()}'),
         );
       }
     }
@@ -138,7 +141,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   onPressed: isLoading ? null : _updateProfile,
                   style: Theme.of(context).elevatedButtonTheme.style,
                   child: isLoading
-                      ? const CircularProgressIndicator()
+                      ? const LoadingIndicator()
                       : const Text('Save Changes'),
                 ),
               ),

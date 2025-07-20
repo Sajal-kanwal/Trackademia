@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:notesheet_tracker/providers/auth_provider.dart';
 import 'package:notesheet_tracker/widgets/common/animated_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notesheet_tracker/widgets/common/error_message.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -37,9 +38,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         context.go('/login'); // Navigate back to login
       } catch (e) {
         if (!mounted) return;
-        // Show error message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
+        showDialog(
+          context: context,
+          builder: (context) => ErrorMessage(message: e.toString()),
         );
       }
     }

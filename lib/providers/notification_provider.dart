@@ -2,14 +2,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notesheet_tracker/models/notification_model.dart';
 import 'package:notesheet_tracker/services/notification_service.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 // Provider for the NotificationService instance
 final notificationServiceProvider = Provider<NotificationService>((ref) => NotificationService());
 
 // FutureProvider to get the list of notifications for the current user
 final notificationsProvider = FutureProvider<List<AppNotification>>((ref) async {
-  final userId = Supabase.instance.client.auth.currentUser?.id;
+  final userId = sb.Supabase.instance.client.auth.currentUser?.id;
   if (userId == null) return [];
   final notificationService = ref.watch(notificationServiceProvider);
   return await notificationService.getNotifications(userId);

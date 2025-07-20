@@ -1,11 +1,11 @@
 
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:notesheet_tracker/models/user_model.dart';
 
 class ProfileService {
-  final SupabaseClient _client = Supabase.instance.client;
+  final sb.SupabaseClient _client = sb.Supabase.instance.client;
 
-  Future<UserProfile?> getProfile(String userId) async {
+  Future<User?> getProfile(String userId) async {
     try {
       final response = await _client
           .from('profiles')
@@ -13,13 +13,13 @@ class ProfileService {
           .eq('id', userId)
           .single();
 
-      return UserProfile.fromMap(response);
+      return User.fromMap(response);
     } catch (e) {
       throw Exception('Failed to fetch profile: $e');
     }
   }
 
-  Future<void> updateProfile(UserProfile profile) async {
+  Future<void> updateProfile(User profile) async {
     try {
       await _client
           .from('profiles')

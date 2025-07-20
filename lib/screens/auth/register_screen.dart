@@ -20,12 +20,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   final _passwordController = TextEditingController();
   final _fullNameController = TextEditingController();
   final _studentIdController = TextEditingController();
+  String _selectedRole = 'student'; // Default role
   
   bool _obscurePassword = true;
   bool _isFullNameFocused = false;
   bool _isStudentIdFocused = false;
   bool _isEmailFocused = false;
   bool _isPasswordFocused = false;
+  bool _isRoleFocused = false;
 
   late AnimationController _fadeController;
   late AnimationController _slideController;
@@ -83,6 +85,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             password: _passwordController.text.trim(),
             fullName: _fullNameController.text.trim(),
             studentId: _studentIdController.text.trim(),
+            role: _selectedRole,
           );
     }
   }
@@ -106,14 +109,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         boxShadow: isFocused
             ? [
                 BoxShadow(
-                  color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.3),
+                  color: Theme.of(context).colorScheme.secondary.withOpacity( 0.3),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
               ]
             : [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
+                  color: Colors.black.withOpacity( 0.1),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -156,7 +159,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             fontWeight: FontWeight.w500,
           ),
           filled: true,
-          fillColor: Colors.white.withValues(alpha: 0.1),
+          fillColor: Colors.white.withOpacity( 0.1),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,
@@ -171,7 +174,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: Colors.white.withOpacity( 0.2),
               width: 1,
             ),
           ),
@@ -181,6 +184,213 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildCustomDropdown() {
+    final roleLabels = {
+      'student': 'Student',
+      'faculty': 'Faculty',
+      'hod': 'Head of Department',
+    };
+
+    final roleIcons = {
+      'student': Icons.school,
+      'faculty': Icons.person,
+      'hod': Icons.admin_panel_settings,
+    };
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: _isRoleFocused
+                ? [
+                    BoxShadow(
+                      color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ]
+                : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () {
+                setState(() {
+                  _isRoleFocused = !_isRoleFocused;
+                  _isFullNameFocused = false;
+                  _isStudentIdFocused = false;
+                  _isEmailFocused = false;
+                  _isPasswordFocused = false;
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white.withOpacity(0.1),
+                  border: Border.all(
+                    color: _isRoleFocused
+                        ? Theme.of(context).colorScheme.secondary
+                        : Colors.white.withOpacity(0.2),
+                    width: _isRoleFocused ? 2 : 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.person_outline,
+                      color: _isRoleFocused
+                          ? Theme.of(context).colorScheme.secondary
+                          : Colors.white70,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Register as',
+                            style: TextStyle(
+                              color: _isRoleFocused
+                                  ? Theme.of(context).colorScheme.secondary
+                                  : Colors.white70,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Icon(
+                                roleIcons[_selectedRole]!,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                roleLabels[_selectedRole]!,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    AnimatedRotation(
+                      turns: _isRoleFocused ? 0.5 : 0.0,
+                      duration: const Duration(milliseconds: 300),
+                      child: Icon(
+                        Icons.keyboard_arrow_down,
+                        color: _isRoleFocused
+                            ? Theme.of(context).colorScheme.secondary
+                            : Colors.white70,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        if (_isRoleFocused)
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            margin: const EdgeInsets.only(top: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.black.withOpacity(0.8),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Column(
+                children: roleLabels.entries.map((entry) {
+                  final isSelected = _selectedRole == entry.key;
+                  return Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          _selectedRole = entry.key;
+                          _isRoleFocused = false;
+                        });
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: isSelected 
+                              ? Theme.of(context).colorScheme.secondary.withOpacity(0.2)
+                              : Colors.transparent,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              roleIcons[entry.key]!,
+                              color: isSelected 
+                                  ? Theme.of(context).colorScheme.secondary
+                                  : Colors.white70,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              entry.value,
+                              style: TextStyle(
+                                color: isSelected 
+                                    ? Theme.of(context).colorScheme.secondary
+                                    : Colors.white,
+                                fontSize: 16,
+                                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                              ),
+                            ),
+                            if (isSelected) ...[
+                              const Spacer(),
+                              Icon(
+                                Icons.check_circle,
+                                color: Theme.of(context).colorScheme.secondary,
+                                size: 20,
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -202,8 +412,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.black.withValues(alpha: 0.3),
-                Colors.black.withValues(alpha: 0.6),
+                Colors.black.withOpacity( 0.3),
+                Colors.black.withOpacity( 0.6),
               ],
             ),
           ),
@@ -227,10 +437,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                               padding: const EdgeInsets.all(20),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.white.withValues(alpha: 0.1),
+                                color: Colors.white.withOpacity( 0.1),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.3),
+                                    color: Theme.of(context).colorScheme.secondary.withOpacity( 0.3),
                                     blurRadius: 30,
                                     offset: const Offset(0, 10),
                                   ),
@@ -250,7 +460,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                             shaderCallback: (bounds) => LinearGradient(
                               colors: [
                                 Theme.of(context).colorScheme.secondary,
-                                Theme.of(context).colorScheme.secondary.withValues(alpha: 0.7),
+                                Theme.of(context).colorScheme.secondary.withOpacity( 0.7),
                               ],
                             ).createShader(bounds),
                             child: Text(
@@ -287,6 +497,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                 _isStudentIdFocused = false;
                                 _isEmailFocused = false;
                                 _isPasswordFocused = false;
+                                _isRoleFocused = false;
                               });
                             },
                             keyboardType: TextInputType.name,
@@ -314,6 +525,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                 _isFullNameFocused = false;
                                 _isEmailFocused = false;
                                 _isPasswordFocused = false;
+                                _isRoleFocused = false;
                               });
                             },
                             keyboardType: TextInputType.text,
@@ -328,7 +540,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                             },
                           ),
                           const SizedBox(height: 20),
-                          
+
+                          // Role Selection Dropdown
+                          _buildCustomDropdown(),
+                          const SizedBox(height: 20),
+
                           // Email Field
                           _buildCustomTextField(
                             controller: _emailController,
@@ -341,6 +557,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                 _isFullNameFocused = false;
                                 _isStudentIdFocused = false;
                                 _isPasswordFocused = false;
+                                _isRoleFocused = false;
                               });
                             },
                             keyboardType: TextInputType.emailAddress,
@@ -368,6 +585,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                 _isFullNameFocused = false;
                                 _isStudentIdFocused = false;
                                 _isEmailFocused = false;
+                                _isRoleFocused = false;
                               });
                             },
                             obscureText: _obscurePassword,
@@ -409,7 +627,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                 backgroundColor: Theme.of(context).colorScheme.secondary,
                                 foregroundColor: Colors.white,
                                 elevation: 8,
-                                shadowColor: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.4),
+                                shadowColor: Theme.of(context).colorScheme.secondary.withOpacity( 0.4),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                 ),
@@ -440,9 +658,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
-                              color: Colors.white.withValues(alpha: 0.05),
+                              color: Colors.white.withOpacity( 0.05),
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.1),
+                                color: Colors.white.withOpacity( 0.1),
                               ),
                             ),
                             child: Row(

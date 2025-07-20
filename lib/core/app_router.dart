@@ -1,14 +1,15 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notesheet_tracker/providers/auth_provider.dart';
-import 'package:notesheet_tracker/screens/auth/forgot_password_screen.dart';
 import 'package:notesheet_tracker/screens/auth/login_screen.dart';
 import 'package:notesheet_tracker/screens/auth/register_screen.dart';
-import 'package:notesheet_tracker/screens/dashboard/dashboard_screen.dart';
-import 'package:notesheet_tracker/screens/dashboard/notifications_screen.dart';
-import 'package:notesheet_tracker/screens/profile/profile_screen.dart';
+import 'package:notesheet_tracker/screens/auth/forgot_password_screen.dart';
+import 'package:notesheet_tracker/screens/unified_dashboard_layout.dart';
+import 'package:notesheet_tracker/models/notesheet_model.dart';
+import 'package:notesheet_tracker/screens/faculty/submission_detail.dart';
+import 'package:notesheet_tracker/screens/hod/approval_detail.dart';
+import 'package:notesheet_tracker/screens/student/notesheet_detail_screen.dart';
 
 // Using a GlobalKey to access the navigator state
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -18,12 +19,8 @@ final routerProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/',
+    initialLocation: '/login',
     routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const DashboardScreen(),
-      ),
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginScreen(),
@@ -37,15 +34,41 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const ForgotPasswordScreen(),
       ),
       GoRoute(
-        path: '/notifications',
-        builder: (context, state) => const NotificationsScreen(),
+        path: '/',
+        builder: (context, state) {
+          return const UnifiedDashboardLayout();
+        },
+      ),
+      // Detail routes that are not part of the main navigation
+      GoRoute(
+        path: '/faculty/submission/:id',
+        builder: (context, state) {
+          final submission = state.extra as Notesheet;
+          return SubmissionDetailScreen(
+            submission: submission,
+          );
+        },
       ),
       GoRoute(
-        path: '/profile',
-        builder: (context, state) => const ProfileScreen(),
+        path: '/hod/approval/:id',
+        builder: (context, state) {
+          final submission = state.extra as Notesheet;
+          return ApprovalDetailScreen(
+            submission: submission,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/notesheet/:id',
+        builder: (context, state) {
+          final notesheet = state.extra as Notesheet;
+          return NotesheetDetailScreen(
+            notesheet: notesheet,
+          );
+        },
       ),
     ],
-    redirect: (context, state) {
+    redirect: (context, state) async {
       final isAuthenticated = authState.value?.session != null;
       final isAuthenticating = state.matchedLocation == '/login' ||
           state.matchedLocation == '/register' ||
@@ -56,6 +79,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       }
 
       if (isAuthenticated && isAuthenticating) {
+        final userRole = await ref.read(authServiceProvider).getUserRole();
+        // Redirect to the unified dashboard after login
         return '/';
       }
 

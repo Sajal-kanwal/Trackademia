@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notesheet_tracker/models/notesheet_model.dart';
 import 'package:notesheet_tracker/services/notesheet_service.dart';
 import 'package:notesheet_tracker/services/storage_service.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'dart:io';
 
 // Provider for the NotesheetService instance
@@ -53,7 +53,7 @@ class NotesheetNotifier extends StateNotifier<bool> {
     try {
       final fileUrl = await _storageService.uploadFile('notesheets', file);
       final notesheet = Notesheet(
-        studentId: Supabase.instance.client.auth.currentUser!.id,
+        studentId: sb.Supabase.instance.client.auth.currentUser!.id,
         title: title,
         description: description,
         category: category,

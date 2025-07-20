@@ -1,8 +1,8 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:notesheet_tracker/models/notesheet_model.dart';
 
 class NotesheetService {
-  final SupabaseClient _client = Supabase.instance.client;
+  final sb.SupabaseClient _client = sb.Supabase.instance.client;
 
   // Create a new notesheet
   Future<void> createNotesheet(Notesheet notesheet) async {
@@ -78,6 +78,25 @@ class NotesheetService {
       return counts;
     } catch (e) {
       throw Exception('Failed to get notesheet counts: $e');
+    }
+  }
+
+  // Get a single notesheet by ID
+  Future<Notesheet?> getNotesheetById(String notesheetId) async {
+    try {
+      final response = await _client
+          .from('notesheets')
+          .select('*, profiles!notesheets_student_id_fkey(full_name)') // Select notesheet and join with profiles to get student name
+          .eq('id', notesheetId)
+          .single();
+
+      return Notesheet.fromMap({
+        ...response,
+        'student_name': response['profiles']['full_name'],
+      });
+    } catch (e) {
+      print('Error fetching notesheet by ID: $e');
+      return null;
     }
   }
 }

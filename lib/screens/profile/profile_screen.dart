@@ -69,7 +69,7 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                _buildProfileInfoRow('Student ID', userProfile.studentId, context),
+                _buildProfileInfoRow('Student ID', userProfile.studentId ?? 'N/A', context),
                 _buildProfileInfoRow('Department', userProfile.department ?? 'N/A', context),
                 _buildProfileInfoRow('Semester', userProfile.semester ?? 'N/A', context),
                 const SizedBox(height: 24),

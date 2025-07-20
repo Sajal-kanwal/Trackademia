@@ -5,6 +5,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:notesheet_tracker/providers/notesheet_provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notesheet_tracker/widgets/common/loading_indicator.dart';
+import 'package:notesheet_tracker/widgets/common/error_message.dart';
 
 class UploadScreen extends ConsumerStatefulWidget {
   const UploadScreen({super.key});
@@ -60,8 +62,9 @@ class _UploadScreenState extends ConsumerState<UploadScreen> {
         _resetForm();
       } catch (e) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Upload failed: ${e.toString()}')),
+        showDialog(
+          context: context,
+          builder: (context) => ErrorMessage(message: 'Upload failed: ${e.toString()}'),
         );
       }
     } else if (_file == null) {
@@ -233,7 +236,7 @@ class _UploadScreenState extends ConsumerState<UploadScreen> {
                   onPressed: notesheetState ? null : _uploadNotesheet,
                   style: Theme.of(context).elevatedButtonTheme.style,
                   child: notesheetState
-                      ? const CircularProgressIndicator(color: Colors.white)
+                      ? const LoadingIndicator()
                       : Text('Upload', style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Colors.white)),
                 ),
               ),

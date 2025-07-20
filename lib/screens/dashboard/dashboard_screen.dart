@@ -34,12 +34,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     const ProfileScreen(),
   ];
 
-  final List<String> _screenTitles = [
-    'Home',
-    'Submissions', 
-    'Notifications',
-    'Profile',
-  ];
+  
 
   @override
   void initState() {
@@ -113,7 +108,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     _fabAnimationController.reverse();
     
     if (mounted) {
-      final result = await Navigator.push(
+      await Navigator.push(
         context,
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) => const UploadScreen(),

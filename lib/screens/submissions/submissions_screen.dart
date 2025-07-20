@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notesheet_tracker/providers/notesheet_provider.dart';
-import 'package:notesheet_tracker/screens/submissions/notesheet_detail_screen.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:notesheet_tracker/widgets/common/loading_indicator.dart';
+import 'package:notesheet_tracker/widgets/common/error_message.dart';
 
 // StateProvider for the selected filter status
 final notesheetFilterProvider = StateProvider<String>((ref) => 'All');
@@ -87,12 +89,7 @@ class _SubmissionsScreenState extends ConsumerState<SubmissionsScreen> {
                           subtitle: Text('Category: ${notesheet.category} - Status: ${notesheet.status}', style: Theme.of(context).textTheme.bodyMedium),
                           trailing: Text(notesheet.fileName, style: Theme.of(context).textTheme.bodySmall),
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => NotesheetDetailScreen(notesheet: notesheet),
-                              ),
-                            );
+                            GoRouter.of(context).go('/notesheet/${notesheet.id}', extra: notesheet);
                           },
                         ),
                       );

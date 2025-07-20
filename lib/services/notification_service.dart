@@ -1,9 +1,9 @@
 
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:notesheet_tracker/models/notification_model.dart';
 
 class NotificationService {
-  final SupabaseClient _client = Supabase.instance.client;
+  final sb.SupabaseClient _client = sb.Supabase.instance.client;
 
   Future<List<AppNotification>> getNotifications(String userId) async {
     try {

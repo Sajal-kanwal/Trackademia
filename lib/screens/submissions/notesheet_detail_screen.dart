@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notesheet_tracker/screens/upload/upload_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notesheet_tracker/core/themes/app_theme.dart';
+import 'package:notesheet_tracker/widgets/common/loading_indicator.dart';
+import 'package:notesheet_tracker/widgets/common/error_message.dart';
 
 class NotesheetDetailScreen extends ConsumerWidget {
   final Notesheet notesheet;
@@ -94,8 +96,8 @@ class NotesheetDetailScreen extends ConsumerWidget {
         fileName.toLowerCase().endsWith('.png')) {
       return CachedNetworkImage(
         imageUrl: fileUrl,
-        placeholder: (context, url) => const CircularProgressIndicator(),
-        errorWidget: (context, url, error) => Icon(Icons.error, color: Theme.of(context).colorScheme.error),
+        placeholder: (context, url) => const LoadingIndicator(),
+        errorWidget: (context, url, error) => ErrorMessage(message: error.toString()),
         height: 300,
         fit: BoxFit.contain,
       );
